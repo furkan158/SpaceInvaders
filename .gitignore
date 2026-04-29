@@ -1,0 +1,3 @@
+*.exe
+*.dll
+src/Makefile
