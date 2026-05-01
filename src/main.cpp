@@ -4,24 +4,44 @@
 #include <SFML/Graphics.hpp>  // SFML grafik kütüphanesi
 #include "Player.h"           // Oyuncu gemisi sınıfı
 #include "Bullet.h"           // Mermi sınıfı
-#include <vector>             // Birden fazla mermi tutmak için
-#include <algorithm>          // remove_if için gerekli
+#include "Enemy.h"            // Düşman sınıfı
+#include <vector>             // Dinamik dizi
+#include <algorithm>          // remove_if için
 
 int main()
 {
     // 800x600 piksel boyutunda pencere oluştur
     sf::RenderWindow window(sf::VideoMode({800, 600}), "Space Invaders");
-
-    // Kare hızını 60 FPS ile sınırla
     window.setFramerateLimit(60);
 
     // Oyuncu gemisini oluştur
     Player player;
 
-    // Mermileri tutan liste (vector = dinamik dizi)
+    // Mermi listesi
     std::vector<Bullet> bullets;
 
-    // Space tuşu kontrolü için - her basışta bir mermi çıksın
+    // Düşman listesi
+    std::vector<Enemy> enemies;
+
+    // Düşman formasyonu oluştur (5 satır x 10 sütun)
+    for (int row = 0; row < 5; row++)
+    {
+        for (int col = 0; col < 10; col++)
+        {
+            // Her düşmanı yan yana ve alt alta yerleştir
+            float x = 50 + col * 70;  // Yatay konum
+            float y = 50 + row * 50;  // Dikey konum
+            enemies.push_back(Enemy(sf::Vector2f(x, y)));
+        }
+    }
+
+    // Düşman hareket yönü (1 = sağ, -1 = sol)
+    int direction = 1;
+
+    // Düşman hareket sayacı (her 30 karede bir hareket et)
+    int moveTimer = 0;
+
+    // Space tuşu kontrolü
     bool spacePressed = false;
 
     // Ana oyun döngüsü
@@ -34,25 +54,24 @@ int main()
                 window.close();
         }
 
-        // Space tuşuna basılıysa mermi oluştur
+        // Space tuşuyla ateş et
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space))
         {
-            if (!spacePressed) // Tuş ilk kez basıldıysa
+            if (!spacePressed)
             {
-                // Geminin konumundan mermi oluştur
                 bullets.push_back(Bullet(player.getPosition()));
                 spacePressed = true;
             }
         }
         else
         {
-            spacePressed = false; // Tuş bırakıldı
+            spacePressed = false;
         }
 
         // Oyuncuyu güncelle
         player.update();
 
-        // Tüm mermileri güncelle
+        // Mermileri güncelle
         for (auto& bullet : bullets)
             bullet.update();
 
@@ -63,15 +82,64 @@ int main()
             bullets.end()
         );
 
+        // Düşman hareketi (her 30 karede bir)
+        moveTimer++;
+        if (moveTimer >= 10)
+        {
+            moveTimer = 0;
+
+            // Sağ kenara ulaşan düşman var mı?
+            bool hitRight = false;
+            bool hitLeft = false;
+
+            for (auto& enemy : enemies)
+            {
+                if (!enemy.isAlive()) continue;
+                if (enemy.getBounds().position.x + enemy.getBounds().size.x >= 780)
+                    hitRight = true;
+                if (enemy.getBounds().position.x <= 20)
+                    hitLeft = true;
+            }
+
+            // Kenara çarptıysa yön değiştir ve aşağı in
+            if (hitRight && direction == 1)
+            {
+                direction = -1;
+                for (auto& enemy : enemies)
+                    enemy.moveDown();
+            }
+            else if (hitLeft && direction == -1)
+            {
+                direction = 1;
+                for (auto& enemy : enemies)
+                    enemy.moveDown();
+            }
+            else
+            {
+                // Normal hareket
+                for (auto& enemy : enemies)
+                {
+                    if (direction == 1)
+                        enemy.moveRight();
+                    else
+                        enemy.moveLeft();
+                }
+            }
+        }
+
         // Ekranı temizle
         window.clear(sf::Color::Black);
 
         // Gemiyi çiz
         player.draw(window);
 
-        // Tüm mermileri çiz
+        // Mermileri çiz
         for (auto& bullet : bullets)
             bullet.draw(window);
+
+        // Düşmanları çiz
+        for (auto& enemy : enemies)
+            enemy.draw(window);
 
         // Ekrana yansıt
         window.display();
