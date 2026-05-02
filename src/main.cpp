@@ -3,13 +3,19 @@
 
 #include <SFML/Graphics.hpp>  // SFML grafik kütüphanesi
 #include "Player.h"           // Oyuncu gemisi sınıfı
-#include "Bullet.h"           // Mermi sınıfı
+#include "Bullet.h"           // Oyuncu mermisi sınıfı
 #include "Enemy.h"            // Düşman sınıfı
+#include "EnemyBullet.h"      // Düşman mermisi sınıfı
 #include <vector>             // Dinamik dizi
 #include <algorithm>          // remove_if için
+#include <cstdlib>            // rand() için
+#include <ctime>              // time() için
 
 int main()
 {
+    // Rastgele sayı üreteci için tohum ayarla
+    srand(time(0));
+
     // 800x600 piksel boyutunda pencere oluştur
     sf::RenderWindow window(sf::VideoMode({800, 600}), "Space Invaders");
     window.setFramerateLimit(60);
@@ -17,20 +23,22 @@ int main()
     // Oyuncu gemisini oluştur
     Player player;
 
-    // Mermi listesi
+    // Oyuncu mermi listesi
     std::vector<Bullet> bullets;
 
     // Düşman listesi
     std::vector<Enemy> enemies;
+
+    // Düşman mermi listesi
+    std::vector<EnemyBullet> enemyBullets;
 
     // Düşman formasyonu oluştur (5 satır x 10 sütun)
     for (int row = 0; row < 5; row++)
     {
         for (int col = 0; col < 10; col++)
         {
-            // Her düşmanı yan yana ve alt alta yerleştir
-            float x = 50 + col * 70;  // Yatay konum
-            float y = 50 + row * 50;  // Dikey konum
+            float x = 50 + col * 70;
+            float y = 50 + row * 50;
             enemies.push_back(Enemy(sf::Vector2f(x, y)));
         }
     }
@@ -38,8 +46,11 @@ int main()
     // Düşman hareket yönü (1 = sağ, -1 = sol)
     int direction = 1;
 
-    // Düşman hareket sayacı (her 30 karede bir hareket et)
+    // Düşman hareket sayacı
     int moveTimer = 0;
+
+    // Düşman ateş sayacı
+    int shootTimer = 0;
 
     // Space tuşu kontrolü
     bool spacePressed = false;
@@ -71,24 +82,23 @@ int main()
         // Oyuncuyu güncelle
         player.update();
 
-        // Mermileri güncelle
+        // Oyuncu mermilerini güncelle
         for (auto& bullet : bullets)
             bullet.update();
 
-        // Ekran dışına çıkan mermileri sil
+        // Ekran dışına çıkan oyuncu mermilerini sil
         bullets.erase(
             std::remove_if(bullets.begin(), bullets.end(),
                 [](Bullet& b) { return b.isOffScreen(); }),
             bullets.end()
         );
 
-        // Düşman hareketi (her 30 karede bir)
+        // Düşman hareketi
         moveTimer++;
         if (moveTimer >= 10)
         {
             moveTimer = 0;
 
-            // Sağ kenara ulaşan düşman var mı?
             bool hitRight = false;
             bool hitLeft = false;
 
@@ -101,7 +111,6 @@ int main()
                     hitLeft = true;
             }
 
-            // Kenara çarptıysa yön değiştir ve aşağı in
             if (hitRight && direction == 1)
             {
                 direction = -1;
@@ -116,7 +125,6 @@ int main()
             }
             else
             {
-                // Normal hareket
                 for (auto& enemy : enemies)
                 {
                     if (direction == 1)
@@ -127,19 +135,56 @@ int main()
             }
         }
 
+        // Düşman ateş etme (her 60 karede bir rastgele düşman ateş eder)
+        shootTimer++;
+        if (shootTimer >= 60)
+        {
+            shootTimer = 0;
+
+            // Hayatta olan düşmanları bul
+            std::vector<int> aliveIndices;
+            for (int i = 0; i < enemies.size(); i++)
+            {
+                if (enemies[i].isAlive())
+                    aliveIndices.push_back(i);
+            }
+
+            // Rastgele bir düşman seç ve ateş ettir
+            if (!aliveIndices.empty())
+            {
+                int randomIndex = aliveIndices[rand() % aliveIndices.size()];
+                enemyBullets.push_back(EnemyBullet(enemies[randomIndex].getBounds().position));
+            }
+        }
+
+        // Düşman mermilerini güncelle
+        for (auto& eb : enemyBullets)
+            eb.update();
+
+        // Ekran dışına çıkan düşman mermilerini sil
+        enemyBullets.erase(
+            std::remove_if(enemyBullets.begin(), enemyBullets.end(),
+                [](EnemyBullet& eb) { return eb.isOffScreen(); }),
+            enemyBullets.end()
+        );
+
         // Ekranı temizle
         window.clear(sf::Color::Black);
 
         // Gemiyi çiz
         player.draw(window);
 
-        // Mermileri çiz
+        // Oyuncu mermilerini çiz
         for (auto& bullet : bullets)
             bullet.draw(window);
 
         // Düşmanları çiz
         for (auto& enemy : enemies)
             enemy.draw(window);
+
+        // Düşman mermilerini çiz
+        for (auto& eb : enemyBullets)
+            eb.draw(window);
 
         // Ekrana yansıt
         window.display();
