@@ -161,6 +161,20 @@ int main()
         for (auto& eb : enemyBullets)
             eb.update();
 
+        // Oyuncu mermisi - düşman çarpışma kontrolü
+        for (auto& bullet : bullets)
+        {
+            for (auto& enemy : enemies)
+            {
+                if (!enemy.isAlive()) continue;
+                if (bullet.getBounds().findIntersection(enemy.getBounds()))
+                {
+                    enemy.kill();
+                    bullet.setOffScreen();
+                }
+            }
+        }
+        
         // Ekran dışına çıkan düşman mermilerini sil
         enemyBullets.erase(
             std::remove_if(enemyBullets.begin(), enemyBullets.end(),
