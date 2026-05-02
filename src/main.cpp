@@ -174,6 +174,16 @@ int main()
                 }
             }
         }
+
+        // Düşman mermisi - oyuncu çarpışma kontrolü
+        for (auto& eb : enemyBullets)
+        {
+            if (eb.getBounds().findIntersection(player.getBounds()))
+            {
+                eb.setOffScreen(); // Mermiyi sil
+                // Can azaltma sonraki adımda gelecek
+            }
+        }
         
         // Ekran dışına çıkan düşman mermilerini sil
         enemyBullets.erase(

@@ -52,3 +52,10 @@ sf::Vector2f Player::getPosition()
 {
     return shape.getPosition();
 }
+
+// Oyuncunun sınır kutusunu döndür
+sf::FloatRect Player::getBounds()
+{
+    return shape.getGlobalBounds();
+}
+

@@ -18,6 +18,9 @@ public:
     // Mermi ekrandan çıktı mı?
     bool isOffScreen();
 
+    // Mermiyi zorla ekran dışı yap (çarpışma sonrası silmek için)
+    void setOffScreen();
+
     // Merminin sınır kutusunu döndür (çarpışma tespiti için)
     sf::FloatRect getBounds();
 

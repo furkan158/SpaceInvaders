@@ -18,6 +18,9 @@ public:
     // Geminin ekrandaki konumunu döndür
     sf::Vector2f getPosition();
 
+    // Oyuncunun sınır kutusunu döndür (çarpışma tespiti için)
+    sf::FloatRect getBounds();
+
 private:
     sf::ConvexShape shape; // Geminin şekli (üçgen)
     float speed;           // Geminin hareket hızı

@@ -39,3 +39,9 @@ sf::FloatRect EnemyBullet::getBounds()
 {
     return shape.getGlobalBounds();
 }
+
+// Mermiyi zorla ekran dışı yap
+void EnemyBullet::setOffScreen()
+{
+    shape.setPosition({0, 700}); // Ekran dışına taşı
+}
