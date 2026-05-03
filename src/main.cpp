@@ -1,6 +1,7 @@
 // Uzay gemisi oyunu - Space Invaders
 // YZM104 Programlama II - Oyun Projesi
 
+#include <string>  // to_string için
 #include <SFML/Graphics.hpp>  // SFML grafik kütüphanesi
 #include "Player.h"           // Oyuncu gemisi sınıfı
 #include "Bullet.h"           // Oyuncu mermisi sınıfı
@@ -25,6 +26,15 @@ int main()
 
     // Skor değişkeni
     int score = 0;
+
+    // Font ve yazı nesneleri
+    sf::Font font;
+    font.openFromFile("assets/impact.ttf"); // Fontu yükle
+    
+    sf::Text scoreText(font);               // Skor yazısı
+    scoreText.setCharacterSize(24);         // Yazı boyutu
+    scoreText.setFillColor(sf::Color::White); // Yazı rengi
+    scoreText.setPosition({10, 10});        // Sol üst köşe
 
     // Oyuncu mermi listesi
     std::vector<Bullet> bullets;
@@ -174,6 +184,7 @@ int main()
                 {
                     enemy.kill();
                     bullet.setOffScreen();
+                    score += 10; // Düşman öldürünce 10 puan ekle
                 }
             }
         }
@@ -195,6 +206,9 @@ int main()
             enemyBullets.end()
         );
 
+        // Skor yazısını güncelle
+        scoreText.setString("SKOR: " + std::to_string(score));
+
         // Ekranı temizle
         window.clear(sf::Color::Black);
 
@@ -213,7 +227,10 @@ int main()
         for (auto& eb : enemyBullets)
             eb.draw(window);
 
-        // Ekrana yansıt
+        // Skoru ekrana çiz
+        window.draw(scoreText);
+        
+            // Ekrana yansıt
         window.display();
     }
 
