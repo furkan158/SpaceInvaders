@@ -15,18 +15,19 @@
 
 int main()
 {
-    // Rastgele sayı üreteci için tohum ayarla
-    srand(time(0));
+    
+    srand(time(0));  // Rastgele sayı üreteci için tohum ayarladık
 
-    // 800x600 piksel boyutunda pencere oluştur
+    // 800x600 piksel boyutunda pencere oluşturduk
     sf::RenderWindow window(sf::VideoMode({800, 600}), "Space Invaders");
     window.setFramerateLimit(60);
 
-    // Oyuncu gemisini oluştur
+    // Oyuncu gemisini oluşturduk
     Player player;
 
-    // Skor değişkeni
-    int score = 0;
+    
+    int score = 0;    // Skor değişkeni
+    int lives = 3;    // Can değişkeni (3 can ile başla)
 
     // Font ve yazı nesneleri
     sf::Font font;
@@ -196,7 +197,7 @@ int main()
             if (eb.getBounds().findIntersection(player.getBounds()))
             {
                 eb.setOffScreen(); // Mermiyi sil
-                // Can azaltma sonraki adımda gelecek
+                lives--; // Bir can azalt
             }
         }
         
