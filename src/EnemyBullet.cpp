@@ -10,7 +10,7 @@ EnemyBullet::EnemyBullet(sf::Vector2f startPos)
     shape.setSize({4, 15});
 
     // Mermi rengini turuncu yap (oyuncu mermisindn ayırt etmek için)
-    shape.setFillColor(sf::Color(255, 165, 0));
+    shape.setFillColor(sf::Color(255, 165, 255));
 
     // Mermiyi düşmanın konumuna yerleştir
     shape.setPosition(startPos);

@@ -23,6 +23,9 @@ int main()
     // Oyuncu gemisini oluştur
     Player player;
 
+    // Skor değişkeni
+    int score = 0;
+
     // Oyuncu mermi listesi
     std::vector<Bullet> bullets;
 
