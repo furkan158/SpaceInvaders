@@ -28,7 +28,12 @@ int main()
     
     int score = 0;    // Skor değişkeni
     int lives = 3;    // Can değişkeni (3 can ile başla)
-
+    
+    // Oyun durumu
+    bool gameOver = false;   
+    bool playerWon = false;
+    
+    
     // Font ve yazı nesneleri
     sf::Font font;
     font.openFromFile("assets/impact.ttf"); // Fontu yükle
@@ -78,6 +83,9 @@ int main()
     // Ana oyun döngüsü
     while (window.isOpen())
     {
+        // Oyun bitti veya kazandıysa döngüyü durdur
+        if (gameOver || playerWon)
+            break;
         // Olayları kontrol et
         while (const std::optional event = window.pollEvent())
         {
@@ -112,6 +120,21 @@ int main()
                 [](Bullet& b) { return b.isOffScreen(); }),
             bullets.end()
         );
+        
+
+        // Tüm düşmanlar öldü mü kontrol et
+        bool allDead = true;
+        for (auto& enemy : enemies)
+        {
+            if (enemy.isAlive())
+            {
+                allDead = false;
+                break;
+            }
+        }
+        if (allDead)
+            playerWon = true; // Oyuncu kazandı
+
 
         // Düşman hareketi
         moveTimer++;
@@ -203,6 +226,8 @@ int main()
             {
                 eb.setOffScreen(); // Mermiyi sil
                 lives--; // Bir can azalt
+                if (lives <= 0)
+                    gameOver = true; // Can bitti, oyun bitti
             }
         }
         
@@ -240,6 +265,94 @@ int main()
         window.draw(livesText);   // Canı ekrana çiz
         
             // Ekrana yansıt
+        window.display();
+    }
+    
+    // Oyun bitti ekranı
+    while (window.isOpen())
+    {
+        // Olayları kontrol et
+        while (const std::optional event = window.pollEvent())
+        {
+            if (event->is<sf::Event::Closed>())
+                window.close();
+            if (event->is<sf::Event::KeyPressed>())
+            {
+                if (event->getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Escape)
+                    window.close();
+            }
+        }
+
+        // Ekranı temizle
+        window.clear(sf::Color::Black);
+
+        // Arka kutu - ortalı
+        sf::RectangleShape box;
+        box.setSize({500, 280});
+        box.setFillColor(sf::Color(17, 17, 17));
+        box.setOutlineColor(sf::Color::Red);
+        box.setOutlineThickness(2);
+        box.setPosition({150, 160});
+
+        // Oyun sonu yazısı - ortalı
+        sf::Text endText(font);
+        endText.setCharacterSize(70);
+        if (gameOver)
+        {
+            endText.setFillColor(sf::Color::Red);
+            endText.setString("GAME OVER");
+        }
+        else
+        {
+            endText.setFillColor(sf::Color::Green);
+            endText.setString("KAZANDIN!");
+        }
+        sf::FloatRect endBounds = endText.getLocalBounds();
+        endText.setOrigin({endBounds.size.x / 2.f, 0});
+        endText.setPosition({400, 170});
+
+        // Ayırıcı çizgi
+        sf::RectangleShape line;
+        line.setSize({460, 1});
+        line.setFillColor(sf::Color(51, 51, 51));
+        line.setPosition({170, 255});
+
+        // Skor yazısı - ortalı
+        sf::Text scoreEndText(font);
+        scoreEndText.setCharacterSize(36);
+        scoreEndText.setFillColor(sf::Color::White);
+        scoreEndText.setString("SKOR: " + std::to_string(score));
+        sf::FloatRect scoreBounds = scoreEndText.getLocalBounds();
+        scoreEndText.setOrigin({scoreBounds.size.x / 2.f, 0});
+        scoreEndText.setPosition({400, 265});
+
+        // Can yazısı - ortalı
+        sf::Text livesEndText(font);
+        livesEndText.setCharacterSize(32);
+        livesEndText.setFillColor(sf::Color(255, 165, 0));
+        livesEndText.setString("CAN: " + std::to_string(lives));
+        sf::FloatRect livesBounds = livesEndText.getLocalBounds();
+        livesEndText.setOrigin({livesBounds.size.x / 2.f, 0});
+        livesEndText.setPosition({400, 315});
+
+        // Çıkış yazısı - ortalı
+        sf::Text exitText(font);
+        exitText.setCharacterSize(18);
+        exitText.setFillColor(sf::Color(85, 85, 85));
+        exitText.setString("Cikmak icin ESC tusuna bas");
+        sf::FloatRect exitBounds = exitText.getLocalBounds();
+        exitText.setOrigin({exitBounds.size.x / 2.f, 0});
+        exitText.setPosition({400, 400});
+
+        // Çiz
+        window.draw(box);
+        window.draw(line);
+        window.draw(endText);
+        window.draw(scoreEndText);
+        window.draw(livesEndText);
+        window.draw(exitText);
+
+        // Ekrana yansıt
         window.display();
     }
 
