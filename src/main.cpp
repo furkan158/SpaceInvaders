@@ -8,6 +8,7 @@
 #include "Bullet.h"           // Oyuncu mermisi sınıfı
 #include "Enemy.h"            // Düşman sınıfı
 #include "EnemyBullet.h"      // Düşman mermisi sınıfı
+#include "Barrier.h"          // Bariyer sınıfı
 #include <vector>             // Dinamik dizi
 #include <algorithm>          // remove_if için
 #include <cstdlib>            // rand() için
@@ -56,6 +57,15 @@ int main()
 
     // Düşman mermi listesi
     std::vector<EnemyBullet> enemyBullets;
+
+    // Bariyer listesi
+    std::vector<Barrier> barriers;
+
+    // 4 bariyer oluştur (alt kısımda eşit aralıklı)
+    barriers.push_back(Barrier(sf::Vector2f(100, 480)));
+    barriers.push_back(Barrier(sf::Vector2f(270, 480)));
+    barriers.push_back(Barrier(sf::Vector2f(440, 480)));
+    barriers.push_back(Barrier(sf::Vector2f(610, 480)));
 
     // Düşman formasyonu oluştur (5 satır x 10 sütun)
     for (int row = 0; row < 5; row++)
@@ -219,6 +229,35 @@ int main()
             }
         }
 
+        // Oyuncu mermisi - bariyer çarpışma kontrolü
+        for (auto& bullet : bullets)
+        {
+            for (auto& barrier : barriers)
+            {
+                if (!barrier.isAlive()) continue;
+                if (bullet.getBounds().findIntersection(barrier.getBounds()))
+                {
+                    barrier.takeDamage(); // Bariyere hasar ver
+                    bullet.setOffScreen(); // Mermiyi sil
+                }
+            }
+        }
+
+        // Düşman mermisi - bariyer çarpışma kontrolü
+        for (auto& eb : enemyBullets)
+        {
+            for (auto& barrier : barriers)
+            {
+                if (!barrier.isAlive()) continue;
+                if (eb.getBounds().findIntersection(barrier.getBounds()))
+                {
+                    barrier.takeDamage(); // Bariyere hasar ver
+                    eb.setOffScreen();    // Mermiyi sil
+                }
+            }
+        }
+
+
         // Düşman mermisi - oyuncu çarpışma kontrolü
         for (auto& eb : enemyBullets)
         {
@@ -260,7 +299,9 @@ int main()
         for (auto& eb : enemyBullets)
             eb.draw(window);
 
-        
+        // Bariyerleri çiz
+        for (auto& barrier : barriers)
+            barrier.draw(window);
         window.draw(scoreText);   // Skoru ekrana çiz
         window.draw(livesText);   // Canı ekrana çiz
         
