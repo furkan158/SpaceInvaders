@@ -29,6 +29,7 @@ int main()
     
     int score = 0;    // Skor değişkeni
     int lives = 3;    // Can değişkeni (3 can ile başla)
+    int level = 1;     // Seviye değişkeni
     
     // Oyun durumu
     bool gameOver = false;   
@@ -143,7 +144,31 @@ int main()
             }
         }
         if (allDead)
-            playerWon = true; // Oyuncu kazandı
+        {
+            level++;          // Seviyeyi artır
+            
+            if (level > 3)    // 3. seviyeden sonra oyun bitti
+            {
+                playerWon = true;
+            }
+            else
+            {
+                // Yeni seviye için düşmanları yeniden oluştur
+                enemies.clear();
+                for (int row = 0; row < 5; row++)
+                {
+                    for (int col = 0; col < 10; col++)
+                    {
+                        float x = 50 + col * 70;
+                        float y = 50 + row * 50;
+                        enemies.push_back(Enemy(sf::Vector2f(x, y)));
+                    }
+                }
+                // Mermileri temizle
+                bullets.clear();
+                enemyBullets.clear();
+            }
+        }
 
 
         // Düşman hareketi
