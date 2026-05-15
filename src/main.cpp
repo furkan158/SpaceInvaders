@@ -131,8 +131,18 @@ int main()
         startText.setOrigin({startBounds.size.x / 2.f, 0});
         startText.setPosition({400, 320});
 
+        // Kontroller yazısı
+        sf::Text controlsText(font);
+        controlsText.setCharacterSize(18);
+        controlsText.setFillColor(sf::Color(150, 150, 150));
+        controlsText.setString("Sol/Sag ok: Hareket   Space: Ates   ESC: Cik");
+        sf::FloatRect controlsBounds = controlsText.getLocalBounds();
+        controlsText.setOrigin({controlsBounds.size.x / 2.f, 0});
+        controlsText.setPosition({400, 380});
+
         window.draw(titleText);
         window.draw(startText);
+        window.draw(controlsText);
         window.display();
     }
 
@@ -190,11 +200,22 @@ int main()
                 break;
             }
         }
+        
+        // Düşman alta ulaştı mı kontrol et
+        for (auto& enemy : enemies)
+        {
+            if (enemy.isAlive() && enemy.getBounds().position.y + enemy.getBounds().size.y >= 560)
+            {
+                gameOver = true; // Düşman alta ulaştı, oyun bitti
+                break;
+            }
+        }
+        
         if (allDead)
         {
             level++;          // Seviyeyi artır
             
-            if (level > 3)    // 3. seviyeden sonra oyun bitti
+            if (level > 99)    // 99. seviyeden sonra oyun bitti
             {
                 playerWon = true;
             }
@@ -262,7 +283,7 @@ int main()
 
         // Düşman ateş etme (her 60 karede bir rastgele düşman ateş eder)
         shootTimer++;
-        if (shootTimer >= 60)
+        if (shootTimer >= (60 - level * 5))
         {
             shootTimer = 0;
 
@@ -450,6 +471,15 @@ int main()
         livesEndText.setOrigin({livesBounds.size.x / 2.f, 0});
         livesEndText.setPosition({400, 315});
 
+        // Seviye yazısı - ortalı
+        sf::Text levelEndText(font);
+        levelEndText.setCharacterSize(28);
+        levelEndText.setFillColor(sf::Color::Yellow);
+        levelEndText.setString("LEVEL: " + std::to_string(level));
+        sf::FloatRect levelBounds = levelEndText.getLocalBounds();
+        levelEndText.setOrigin({levelBounds.size.x / 2.f, 0});
+        levelEndText.setPosition({400, 355});
+
         // Çıkış yazısı - ortalı
         sf::Text exitText(font);
         exitText.setCharacterSize(18);
@@ -465,6 +495,7 @@ int main()
         window.draw(endText);
         window.draw(scoreEndText);
         window.draw(livesEndText);
+        window.draw(levelEndText);
         window.draw(exitText);
 
         // Ekrana yansıt
