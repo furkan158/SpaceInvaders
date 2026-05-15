@@ -91,6 +91,48 @@ int main()
     // Space tuşu kontrolü
     bool spacePressed = false;
 
+
+    // Ana menü döngüsü
+    while (window.isOpen())
+    {
+        while (const std::optional event = window.pollEvent())
+        {
+            if (event->is<sf::Event::Closed>())
+                window.close();
+            if (event->is<sf::Event::KeyPressed>())
+            {
+                if (event->getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Enter)
+                    goto startGame; // Enter'a basılınca oyunu başlat
+            }
+        }
+
+        window.clear(sf::Color::Black);
+
+        // Başlık yazısı
+        sf::Text titleText(font);
+        titleText.setCharacterSize(70);
+        titleText.setFillColor(sf::Color::Green);
+        titleText.setString("SPACE INVADERS");
+        sf::FloatRect titleBounds = titleText.getLocalBounds();
+        titleText.setOrigin({titleBounds.size.x / 2.f, 0});
+        titleText.setPosition({400, 180});
+
+        // Başlat yazısı
+        sf::Text startText(font);
+        startText.setCharacterSize(24);
+        startText.setFillColor(sf::Color::White);
+        startText.setString("Baslamak icin ENTER'a bas");
+        sf::FloatRect startBounds = startText.getLocalBounds();
+        startText.setOrigin({startBounds.size.x / 2.f, 0});
+        startText.setPosition({400, 320});
+
+        window.draw(titleText);
+        window.draw(startText);
+        window.display();
+    }
+
+    startGame:
+    
     // Ana oyun döngüsü
     while (window.isOpen())
     {
