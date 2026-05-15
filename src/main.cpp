@@ -21,7 +21,7 @@ int main()
 
     // 800x600 piksel boyutunda pencere oluşturduk
     sf::RenderWindow window(sf::VideoMode({800, 600}), "Space Invaders");
-    window.setFramerateLimit(60);
+    window.setFramerateLimit(60); // Kare hızını 60 FPS ile sınırladık
 
     // Oyuncu gemisini oluşturduk
     Player player;
@@ -132,7 +132,7 @@ int main()
     }
 
     startGame:
-    
+
     // Ana oyun döngüsü
     while (window.isOpen())
     {
@@ -152,7 +152,7 @@ int main()
             if (!spacePressed)
             {
                 bullets.push_back(Bullet(player.getPosition()));
-                spacePressed = true;
+                spacePressed = true;    // Tuş bırakıldı
             }
         }
         else
@@ -219,7 +219,7 @@ int main()
         {
             moveTimer = 0;
 
-            bool hitRight = false;
+            bool hitRight = false;  // Sağ veya sol kenara çarpan düşman var mı kontrol et
             bool hitLeft = false;
 
             for (auto& enemy : enemies)
