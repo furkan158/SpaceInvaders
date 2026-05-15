@@ -50,6 +50,11 @@ int main()
     livesText.setFillColor(sf::Color::White); // Yazı rengi
     livesText.setPosition({650, 10});      // Sağ üst köşe
 
+    sf::Text levelText(font);              // Seviye yazısı
+    levelText.setCharacterSize(24);        // Yazı boyutu
+    levelText.setFillColor(sf::Color::Yellow); // Yazı rengi
+    levelText.setPosition({350, 10});      // Üst orta
+
     // Oyuncu mermi listesi
     std::vector<Bullet> bullets;
 
@@ -347,6 +352,7 @@ int main()
         
         scoreText.setString("SKOR: " + std::to_string(score)); // Skor yazısını güncelle
         livesText.setString("CAN: " + std::to_string(lives)); // Can yazısını güncelle
+        levelText.setString("LEVEL: " + std::to_string(level)); // Seviye yazısını güncelle
 
         // Ekranı temizle
         window.clear(sf::Color::Black);
@@ -371,6 +377,7 @@ int main()
             barrier.draw(window);
         window.draw(scoreText);   // Skoru ekrana çiz
         window.draw(livesText);   // Canı ekrana çiz
+        window.draw(levelText);   // Seviyeyi ekrana çiz
         
             // Ekrana yansıt
         window.display();
