@@ -173,7 +173,7 @@ int main()
 
         // Düşman hareketi
         moveTimer++;
-        if (moveTimer >= 10)
+        if (moveTimer >= (10 - level * 2))
         {
             moveTimer = 0;
 
