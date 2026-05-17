@@ -4,6 +4,7 @@
 
 #include <string>  // to_string için
 #include <SFML/Graphics.hpp>  // SFML grafik kütüphanesi
+#include <SFML/Audio.hpp>     // Ses kütüphanesi
 #include "Player.h"           // Oyuncu gemisi sınıfı
 #include "Bullet.h"           // Oyuncu mermisi sınıfı
 #include "Enemy.h"            // Düşman sınıfı
@@ -39,6 +40,15 @@ int main()
     // Font ve yazı nesneleri
     sf::Font font;
     font.openFromFile("assets/impact.ttf"); // Fontu yükle
+
+    // Ses dosyalarını yükle
+    sf::SoundBuffer shootBuffer;
+    shootBuffer.loadFromFile("assets/mixkit-short-laser-gun-shot-1670.wav");
+    sf::Sound shootSound(shootBuffer);  // Ateş sesi
+
+    sf::SoundBuffer explosionBuffer;
+    explosionBuffer.loadFromFile("assets/mixkit-arcade-game-explosion-2759.wav");
+    sf::Sound explosionSound(explosionBuffer);  // Patlama sesi
     
     sf::Text scoreText(font);               // Skor yazısı
     scoreText.setCharacterSize(24);         // Yazı boyutu
@@ -167,6 +177,7 @@ int main()
             if (!spacePressed)
             {
                 bullets.push_back(Bullet(player.getPosition()));
+                shootSound.play(); // Ateş sesi çal
                 spacePressed = true;    // Tuş bırakıldı
             }
         }
@@ -318,6 +329,7 @@ int main()
                     enemy.kill();
                     bullet.setOffScreen();
                     score += 10; // Düşman öldürünce 10 puan ekle
+                    explosionSound.play(); // Patlama sesi çal
                 }
             }
         }
