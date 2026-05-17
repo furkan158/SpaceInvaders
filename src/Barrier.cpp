@@ -7,11 +7,13 @@ Barrier::Barrier(sf::Vector2f startPos)
     health = 3;   // 3 can ile başla
     alive = true; // Başlangıçta ayakta
 
-    // Bariyer şeklini ayarla (60x20 piksel)
-    shape.setSize({60, 20});
+    // Bariyer şeklini ayarla (60x12 piksel)
+    shape.setSize({60, 12});
 
-    // Bariyer rengini yeşil yap
-    shape.setFillColor(sf::Color::Green);
+    // Sadece çerçeve - cyberpunk cyan
+    shape.setFillColor(sf::Color::Transparent);
+    shape.setOutlineColor(sf::Color(0, 255, 255));
+    shape.setOutlineThickness(2);
 
     // Bariyeri konuma yerleştir
     shape.setPosition(startPos);
@@ -37,9 +39,9 @@ void Barrier::takeDamage()
 
     // Cana göre renk değiştir
     if (health == 2)
-        shape.setFillColor(sf::Color(255, 165, 0)); // Turuncu
+        shape.setOutlineColor(sf::Color(255, 165, 0)); // Turuncu çerçeve
     else if (health == 1)
-        shape.setFillColor(sf::Color::Red);          // Kırmızı
+        shape.setOutlineColor(sf::Color::Red);          // Kırmızı çerçeve
     else
         alive = false; // Can bitti, bariyer yıkıldı
 }

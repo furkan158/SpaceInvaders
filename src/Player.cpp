@@ -14,8 +14,8 @@ Player::Player()
     shape.setPoint(1, sf::Vector2f(-15, 20)); // Sol alt nokta
     shape.setPoint(2, sf::Vector2f(15, 20));  // Sağ alt nokta
 
-    // Gemi rengini yeşil yap
-    shape.setFillColor(sf::Color::Green);
+    // Gemi rengini cyan yap (Cyberpunk teması)
+    shape.setFillColor(sf::Color(0, 255, 255));
 
     // Gemiyi ekranın alt ortasına yerleştir
     shape.setPosition({400, 550});

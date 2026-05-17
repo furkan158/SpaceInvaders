@@ -9,8 +9,13 @@ Enemy::Enemy(sf::Vector2f startPos)
     // Düşman şeklini ayarla (30x30 piksel kare)
     shape.setSize({30, 30});
 
-    // Düşman rengini kırmızı yap
-    shape.setFillColor(sf::Color::Red);
+    // Düşman rengini satıra göre belirle (Cyberpunk teması)
+    int row = (int)(startPos.y - 50) / 50;
+    if (row == 0) shape.setFillColor(sf::Color(255, 0, 255));      // Pembe
+    else if (row == 1) shape.setFillColor(sf::Color(204, 0, 255)); // Mor
+    else if (row == 2) shape.setFillColor(sf::Color(153, 0, 255)); // Koyu mor
+    else if (row == 3) shape.setFillColor(sf::Color(102, 0, 255)); // Mavi mor
+    else shape.setFillColor(sf::Color(51, 0, 255));                // Mavi
 
     // Düşmanı başlangıç konumuna yerleştir
     shape.setPosition(startPos);

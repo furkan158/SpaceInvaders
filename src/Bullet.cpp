@@ -9,8 +9,8 @@ Bullet::Bullet(sf::Vector2f startPos)
     // Mermi şeklini ayarla (4x15 piksel dikdörtgen)
     shape.setSize({4, 15});
 
-    // Mermi rengini sarı yap
-    shape.setFillColor(sf::Color::Yellow);
+    // Gemi rengini cyan yap (Cyberpunk teması)
+    shape.setFillColor(sf::Color(0, 255, 255));
 
     // Mermiyi geminin konumuna yerleştir
     shape.setPosition(startPos);

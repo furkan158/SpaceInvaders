@@ -27,6 +27,17 @@ int main()
     // Oyuncu gemisini oluşturduk
     Player player;
 
+    // Yıldızlı arka plan için rastgele yıldız konumları
+    std::vector<sf::CircleShape> stars;
+    for (int i = 0; i < 50; i++)
+    {
+        sf::CircleShape star;
+        star.setRadius(1.0f);
+        star.setFillColor(sf::Color(255, 0, 255)); // Pembe yıldızlar
+        star.setPosition({(float)(rand() % 800), (float)(rand() % 600)});
+        stars.push_back(star);
+    }
+
     
     int score = 0;    // Skor değişkeni
     int lives = 3;    // Can değişkeni (3 can ile başla)
@@ -53,17 +64,17 @@ int main()
     sf::Text scoreText(font);               // Skor yazısı
     scoreText.setCharacterSize(24);         // Yazı boyutu
     scoreText.setFillColor(sf::Color::White); // Yazı rengi
-    scoreText.setPosition({10, 10});        // Sol üst köşe
+    scoreText.setPosition({20, 15});        // Sol üst köşe
 
     sf::Text livesText(font);              // Can yazısı
     livesText.setCharacterSize(24);        // Yazı boyutu
     livesText.setFillColor(sf::Color::White); // Yazı rengi
-    livesText.setPosition({650, 10});      // Sağ üst köşe
+    livesText.setPosition({713, 15});      // Sağ üst köşe
 
     sf::Text levelText(font);              // Seviye yazısı
     levelText.setCharacterSize(24);        // Yazı boyutu
     levelText.setFillColor(sf::Color::Yellow); // Yazı rengi
-    levelText.setPosition({350, 10});      // Üst orta
+    levelText.setPosition({375, 15});      // Üst orta
 
     // Oyuncu mermi listesi
     std::vector<Bullet> bullets;
@@ -123,36 +134,99 @@ int main()
 
         window.clear(sf::Color::Black);
 
-        // Başlık yazısı
+        // Yıldızları çiz
+        for (auto& star : stars)
+            window.draw(star);
+
+        // Dış çerçeve - pembe
+        sf::RectangleShape outerBox;
+        outerBox.setSize({790, 590});
+        outerBox.setFillColor(sf::Color::Transparent);
+        outerBox.setOutlineColor(sf::Color(255, 0, 255));
+        outerBox.setOutlineThickness(2);
+        outerBox.setPosition({5, 5});
+
+        // İç çerçeve - cyan ince
+        sf::RectangleShape innerBox;
+        innerBox.setSize({774, 574});
+        innerBox.setFillColor(sf::Color::Transparent);
+        innerBox.setOutlineColor(sf::Color(0, 255, 255, 60));
+        innerBox.setOutlineThickness(1);
+        innerBox.setPosition({13, 13});
+
+        // Köşe süsleri - sol üst
+        sf::RectangleShape c1h, c1v;
+        c1h.setSize({30, 3}); c1h.setFillColor(sf::Color(0, 255, 255)); c1h.setPosition({5, 5});
+        c1v.setSize({3, 30}); c1v.setFillColor(sf::Color(0, 255, 255)); c1v.setPosition({5, 5});
+
+        // Köşe süsleri - sağ üst
+        sf::RectangleShape c2h, c2v;
+        c2h.setSize({30, 3}); c2h.setFillColor(sf::Color(0, 255, 255)); c2h.setPosition({765, 5});
+        c2v.setSize({3, 30}); c2v.setFillColor(sf::Color(0, 255, 255)); c2v.setPosition({792, 5});
+
+        // Köşe süsleri - sol alt
+        sf::RectangleShape c3h, c3v;
+        c3h.setSize({30, 3}); c3h.setFillColor(sf::Color(0, 255, 255)); c3h.setPosition({5, 592});
+        c3v.setSize({3, 30}); c3v.setFillColor(sf::Color(0, 255, 255)); c3v.setPosition({5, 562});
+
+        // Köşe süsleri - sağ alt
+        sf::RectangleShape c4h, c4v;
+        c4h.setSize({30, 3}); c4h.setFillColor(sf::Color(0, 255, 255)); c4h.setPosition({765, 592});
+        c4v.setSize({3, 30}); c4v.setFillColor(sf::Color(0, 255, 255)); c4v.setPosition({792, 562});
+
+        // Ayırıcı çizgi
+        sf::RectangleShape menuLine;
+        menuLine.setSize({740, 1});
+        menuLine.setFillColor(sf::Color(255, 0, 255, 120));
+        menuLine.setPosition({30, 310});
+
+        // SPACE INVADERS yazısı
         sf::Text titleText(font);
-        titleText.setCharacterSize(70);
-        titleText.setFillColor(sf::Color::Green);
+        titleText.setCharacterSize(80);
+        titleText.setFillColor(sf::Color(0, 255, 255));
         titleText.setString("SPACE INVADERS");
         sf::FloatRect titleBounds = titleText.getLocalBounds();
         titleText.setOrigin({titleBounds.size.x / 2.f, 0});
         titleText.setPosition({400, 180});
 
-        // Başlat yazısı
+        // ENTER yazısı
         sf::Text startText(font);
-        startText.setCharacterSize(24);
-        startText.setFillColor(sf::Color::White);
-        startText.setString("Baslamak icin ENTER'a bas");
+        startText.setCharacterSize(32);
+        startText.setFillColor(sf::Color(255, 0, 255));
+        startText.setString("< ENTER: Baslat >");
         sf::FloatRect startBounds = startText.getLocalBounds();
         startText.setOrigin({startBounds.size.x / 2.f, 0});
-        startText.setPosition({400, 320});
+        startText.setPosition({400, 340});
 
         // Kontroller yazısı
         sf::Text controlsText(font);
-        controlsText.setCharacterSize(18);
-        controlsText.setFillColor(sf::Color(150, 150, 150));
-        controlsText.setString("Sol/Sag ok: Hareket   Space: Ates   ESC: Cik");
+        controlsText.setCharacterSize(20);
+        controlsText.setFillColor(sf::Color(102, 0, 255));
+        controlsText.setString("Sol/Sag: Hareket      Space: Ates      ESC: Cik");
         sf::FloatRect controlsBounds = controlsText.getLocalBounds();
         controlsText.setOrigin({controlsBounds.size.x / 2.f, 0});
-        controlsText.setPosition({400, 380});
+        controlsText.setPosition({400, 410});
 
+        // Versiyon yazısı
+        sf::Text versionText(font);
+        versionText.setCharacterSize(16);
+        versionText.setFillColor(sf::Color(34, 34, 34));
+        versionText.setString("YZM104 - Programlama II");
+        sf::FloatRect versionBounds = versionText.getLocalBounds();
+        versionText.setOrigin({versionBounds.size.x / 2.f, 0});
+        versionText.setPosition({400, 510});
+
+        window.draw(outerBox);
+        window.draw(innerBox);
+        window.draw(c1h); window.draw(c1v);
+        window.draw(c2h); window.draw(c2v);
+        window.draw(c3h); window.draw(c3v);
+        window.draw(c4h); window.draw(c4v);
+        window.draw(menuLine);
         window.draw(titleText);
         window.draw(startText);
         window.draw(controlsText);
+        window.draw(versionText);
         window.display();
     }
 
@@ -200,7 +274,6 @@ int main()
             bullets.end()
         );
         
-
         // Tüm düşmanlar öldü mü kontrol et
         bool allDead = true;
         for (auto& enemy : enemies)
@@ -389,6 +462,9 @@ int main()
 
         // Ekranı temizle
         window.clear(sf::Color::Black);
+        // Yıldızları çiz
+        for (auto& star : stars)
+            window.draw(star);
 
         // Gemiyi çiz
         player.draw(window);
@@ -412,6 +488,48 @@ int main()
         window.draw(livesText);   // Canı ekrana çiz
         window.draw(levelText);   // Seviyeyi ekrana çiz
         
+        // Dış çerçeve - pembe
+        sf::RectangleShape gameOuterBox;
+        gameOuterBox.setSize({790, 590});
+        gameOuterBox.setFillColor(sf::Color::Transparent);
+        gameOuterBox.setOutlineColor(sf::Color(255, 0, 255));
+        gameOuterBox.setOutlineThickness(2);
+        gameOuterBox.setPosition({5, 5});
+
+        // İç çerçeve - cyan ince
+        sf::RectangleShape gameInnerBox;
+        gameInnerBox.setSize({774, 574});
+        gameInnerBox.setFillColor(sf::Color::Transparent);
+        gameInnerBox.setOutlineColor(sf::Color(0, 255, 255, 60));
+        gameInnerBox.setOutlineThickness(1);
+        gameInnerBox.setPosition({13, 13});
+
+        // Köşe süsleri - sol üst
+        sf::RectangleShape gc1h, gc1v;
+        gc1h.setSize({30, 3}); gc1h.setFillColor(sf::Color(0, 255, 255)); gc1h.setPosition({5, 5});
+        gc1v.setSize({3, 30}); gc1v.setFillColor(sf::Color(0, 255, 255)); gc1v.setPosition({5, 5});
+
+        // Köşe süsleri - sağ üst
+        sf::RectangleShape gc2h, gc2v;
+        gc2h.setSize({30, 3}); gc2h.setFillColor(sf::Color(0, 255, 255)); gc2h.setPosition({765, 5});
+        gc2v.setSize({3, 30}); gc2v.setFillColor(sf::Color(0, 255, 255)); gc2v.setPosition({792, 5});
+
+        // Köşe süsleri - sol alt
+        sf::RectangleShape gc3h, gc3v;
+        gc3h.setSize({30, 3}); gc3h.setFillColor(sf::Color(0, 255, 255)); gc3h.setPosition({5, 592});
+        gc3v.setSize({3, 30}); gc3v.setFillColor(sf::Color(0, 255, 255)); gc3v.setPosition({5, 562});
+
+        // Köşe süsleri - sağ alt
+        sf::RectangleShape gc4h, gc4v;
+        gc4h.setSize({30, 3}); gc4h.setFillColor(sf::Color(0, 255, 255)); gc4h.setPosition({765, 592});
+        gc4v.setSize({3, 30}); gc4v.setFillColor(sf::Color(0, 255, 255)); gc4v.setPosition({792, 562});
+
+        window.draw(gameOuterBox);
+        window.draw(gameInnerBox);
+        window.draw(gc1h); window.draw(gc1v);
+        window.draw(gc2h); window.draw(gc2v);
+        window.draw(gc3h); window.draw(gc3v);
+        window.draw(gc4h); window.draw(gc4v);
             // Ekrana yansıt
         window.display();
     }
@@ -419,7 +537,6 @@ int main()
     // Oyun bitti ekranı
     while (window.isOpen())
     {
-        // Olayları kontrol et
         while (const std::optional event = window.pollEvent())
         {
             if (event->is<sf::Event::Closed>())
@@ -431,86 +548,119 @@ int main()
             }
         }
 
-        // Ekranı temizle
         window.clear(sf::Color::Black);
 
-        // Arka kutu - ortalı
-        sf::RectangleShape box;
-        box.setSize({500, 280});
-        box.setFillColor(sf::Color(17, 17, 17));
-        box.setOutlineColor(sf::Color::Red);
-        box.setOutlineThickness(2);
-        box.setPosition({150, 160});
+        // Yıldızları çiz
+        for (auto& star : stars)
+            window.draw(star);
 
-        // Oyun sonu yazısı - ortalı
+        // Dış çerçeve - pembe
+        sf::RectangleShape outerBox;
+        outerBox.setSize({790, 590});
+        outerBox.setFillColor(sf::Color::Transparent);
+        outerBox.setOutlineColor(sf::Color(255, 0, 255));
+        outerBox.setOutlineThickness(2);
+        outerBox.setPosition({5, 5});
+
+        // İç çerçeve - cyan ince
+        sf::RectangleShape innerBox;
+        innerBox.setSize({774, 574});
+        innerBox.setFillColor(sf::Color::Transparent);
+        innerBox.setOutlineColor(sf::Color(0, 255, 255, 60));
+        innerBox.setOutlineThickness(1);
+        innerBox.setPosition({13, 13});
+
+        // Köşe süsleri - sol üst
+        sf::RectangleShape c1h, c1v;
+        c1h.setSize({30, 3}); c1h.setFillColor(sf::Color(0, 255, 255)); c1h.setPosition({5, 5});
+        c1v.setSize({3, 30}); c1v.setFillColor(sf::Color(0, 255, 255)); c1v.setPosition({5, 5});
+
+        // Köşe süsleri - sağ üst
+        sf::RectangleShape c2h, c2v;
+        c2h.setSize({30, 3}); c2h.setFillColor(sf::Color(0, 255, 255)); c2h.setPosition({765, 5});
+        c2v.setSize({3, 30}); c2v.setFillColor(sf::Color(0, 255, 255)); c2v.setPosition({792, 5});
+
+        // Köşe süsleri - sol alt
+        sf::RectangleShape c3h, c3v;
+        c3h.setSize({30, 3}); c3h.setFillColor(sf::Color(0, 255, 255)); c3h.setPosition({5, 592});
+        c3v.setSize({3, 30}); c3v.setFillColor(sf::Color(0, 255, 255)); c3v.setPosition({5, 562});
+
+        // Köşe süsleri - sağ alt
+        sf::RectangleShape c4h, c4v;
+        c4h.setSize({30, 3}); c4h.setFillColor(sf::Color(0, 255, 255)); c4h.setPosition({765, 592});
+        c4v.setSize({3, 30}); c4v.setFillColor(sf::Color(0, 255, 255)); c4v.setPosition({792, 562});
+
+        // Ayırıcı çizgi
+        sf::RectangleShape endLine;
+        endLine.setSize({740, 1});
+        endLine.setFillColor(sf::Color(255, 0, 255, 120));
+        endLine.setPosition({30, 310});
+
+        // Oyun sonu yazısı
         sf::Text endText(font);
-        endText.setCharacterSize(70);
+        endText.setCharacterSize(90);
         if (gameOver)
         {
-            endText.setFillColor(sf::Color::Red);
+            endText.setFillColor(sf::Color(255, 0, 255));
             endText.setString("GAME OVER");
         }
         else
         {
-            endText.setFillColor(sf::Color::Green);
+            endText.setFillColor(sf::Color(0, 255, 255));
             endText.setString("KAZANDIN!");
         }
         sf::FloatRect endBounds = endText.getLocalBounds();
         endText.setOrigin({endBounds.size.x / 2.f, 0});
-        endText.setPosition({400, 170});
+        endText.setPosition({400, 160});
 
-        // Ayırıcı çizgi
-        sf::RectangleShape line;
-        line.setSize({460, 1});
-        line.setFillColor(sf::Color(51, 51, 51));
-        line.setPosition({170, 255});
-
-        // Skor yazısı - ortalı
+        // Skor yazısı
         sf::Text scoreEndText(font);
         scoreEndText.setCharacterSize(36);
         scoreEndText.setFillColor(sf::Color::White);
         scoreEndText.setString("SKOR: " + std::to_string(score));
         sf::FloatRect scoreBounds = scoreEndText.getLocalBounds();
         scoreEndText.setOrigin({scoreBounds.size.x / 2.f, 0});
-        scoreEndText.setPosition({400, 265});
+        scoreEndText.setPosition({400, 340});
 
-        // Can yazısı - ortalı
+        // Can yazısı
         sf::Text livesEndText(font);
-        livesEndText.setCharacterSize(32);
+        livesEndText.setCharacterSize(30);
         livesEndText.setFillColor(sf::Color(255, 165, 0));
         livesEndText.setString("CAN: " + std::to_string(lives));
         sf::FloatRect livesBounds = livesEndText.getLocalBounds();
         livesEndText.setOrigin({livesBounds.size.x / 2.f, 0});
-        livesEndText.setPosition({400, 315});
+        livesEndText.setPosition({400, 395});
 
-        // Seviye yazısı - ortalı
+        // Seviye yazısı
         sf::Text levelEndText(font);
-        levelEndText.setCharacterSize(28);
+        levelEndText.setCharacterSize(30);
         levelEndText.setFillColor(sf::Color::Yellow);
         levelEndText.setString("LEVEL: " + std::to_string(level));
         sf::FloatRect levelBounds = levelEndText.getLocalBounds();
         levelEndText.setOrigin({levelBounds.size.x / 2.f, 0});
-        levelEndText.setPosition({400, 355});
+        levelEndText.setPosition({400, 445});
 
-        // Çıkış yazısı - ortalı
+        // Çıkış yazısı
         sf::Text exitText(font);
-        exitText.setCharacterSize(18);
-        exitText.setFillColor(sf::Color(85, 85, 85));
+        exitText.setCharacterSize(20);
+        exitText.setFillColor(sf::Color(102, 0, 255));
         exitText.setString("Cikmak icin ESC tusuna bas");
         sf::FloatRect exitBounds = exitText.getLocalBounds();
         exitText.setOrigin({exitBounds.size.x / 2.f, 0});
-        exitText.setPosition({400, 400});
+        exitText.setPosition({400, 520});
 
-        // Çiz
-        window.draw(box);
-        window.draw(line);
+        window.draw(outerBox);
+        window.draw(innerBox);
+        window.draw(c1h); window.draw(c1v);
+        window.draw(c2h); window.draw(c2v);
+        window.draw(c3h); window.draw(c3v);
+        window.draw(c4h); window.draw(c4v);
+        window.draw(endLine);
         window.draw(endText);
         window.draw(scoreEndText);
         window.draw(livesEndText);
         window.draw(levelEndText);
         window.draw(exitText);
-
-        // Ekrana yansıt
         window.display();
     }
 
